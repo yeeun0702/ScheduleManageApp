@@ -3,7 +3,9 @@ package com.example.schedulemanageapp.domain.users.controller;
 import com.example.schedulemanageapp.common.exception.code.enums.SuccessCode;
 import com.example.schedulemanageapp.common.response.ApiResponseDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserCreateRequestDto;
+import com.example.schedulemanageapp.domain.users.dto.request.UserUpdateRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserDetailResponseDto;
+import com.example.schedulemanageapp.domain.users.dto.response.UserUpdateResponseDto;
 import com.example.schedulemanageapp.domain.users.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +30,13 @@ public class UserController {
     public ResponseEntity<ApiResponseDto<UserDetailResponseDto>> getUser(@PathVariable final Long userId){
         return ResponseEntity.ok(ApiResponseDto.success(SuccessCode.USER_READ_SUCCESS, userService.getUser(userId), "/api/users/"));
     }
+
+    @PutMapping("{userId}")
+    public ResponseEntity<ApiResponseDto<UserUpdateResponseDto>> updateUser(
+            @PathVariable final Long userId,
+            @RequestBody @Valid final UserUpdateRequestDto userUpdateRequestDto){
+        return ResponseEntity.ok(ApiResponseDto.success(SuccessCode.USER_UPDATE_SUCCESS, userService.updateUser(userId, userUpdateRequestDto), "api/users"));
+    }
+
 
 }

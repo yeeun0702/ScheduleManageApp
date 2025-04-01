@@ -23,15 +23,25 @@ public class Schedule extends BaseTimeEntity {
     @Column(name="todo_content", nullable = false)
     private String todoContent;
 
+    @Column(name="password", nullable = false)
+    private String password;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
     // 생성자
-    public Schedule(String todoTitle, String todoContent, Users users) {
+    public Schedule(String todoTitle, String todoContent, String password, Users users) {
         this.todoTitle = todoTitle;
         this.todoContent = todoContent;
+        this.password = password;
         this.users = users;
+    }
+
+    public void update(String todoTitle, String todoContent, String password) {
+        this.todoTitle = todoTitle;
+        this.todoContent = todoContent;
+        this.password = password;
     }
 
 }

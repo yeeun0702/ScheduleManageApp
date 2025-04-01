@@ -4,8 +4,11 @@ package com.example.schedulemanageapp.domain.schedule.controller;
 import com.example.schedulemanageapp.common.exception.code.enums.SuccessCode;
 import com.example.schedulemanageapp.common.response.ApiResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleCreateRequestDto;
+import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleDeleteRequestDto;
+import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleUpdateReqeustDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleDetailResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleListResponseDto;
+import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleUpdateResponseDto;
 import com.example.schedulemanageapp.domain.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +42,23 @@ public class ScheduleController {
             @RequestParam(required = false) Long userId // 조회 대상의 사용자 ID, null 이면 전체 조회
     ) {
         return ResponseEntity.ok(
-                ApiResponseDto.success(SuccessCode.SCHEDULE_LIST_SUCCESS, scheduleService.findSchedulesByConditions(updatedDate, userId), "/api/schedules/search")
+                ApiResponseDto.success(SuccessCode.SCHEDULE_LIST_SUCCESS, scheduleService.findSchedulesByConditions(updatedDate, userId), "/api/schedules")
         );
+    }
+
+    @PutMapping("/{scheduleId}")
+    public ResponseEntity<ApiResponseDto<ScheduleUpdateResponseDto>> updateSchedule(
+            @PathVariable final Long scheduleId,
+            @RequestBody @Valid final ScheduleUpdateReqeustDto scheduleUpdateReqeustDto
+            ){
+        return ResponseEntity.ok(ApiResponseDto.success(SuccessCode.SCHEDULE_UPDATE_SUCCESS, scheduleService.updateSchedule(scheduleId, scheduleUpdateReqeustDto),"api/schedules"));
+    }
+
+    @DeleteMapping("/{scheduleId}")
+    public ResponseEntity<Void> deleteSchedule(
+            @PathVariable final long scheduleId,
+            @RequestBody @Valid final ScheduleDeleteRequestDto scheduleDeleteRequestDto) {
+        scheduleService.deleteSchedule(scheduleId, scheduleDeleteRequestDto);
+        return ResponseEntity.noContent().build();
     }
 }

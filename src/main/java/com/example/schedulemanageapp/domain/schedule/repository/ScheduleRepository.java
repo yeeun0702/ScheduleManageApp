@@ -16,7 +16,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
      */
     @Query("""
         SELECT s FROM Schedule s
-        WHERE (:userId IS NULL OR s.users.id = :userId)
+        WHERE (:userId IS NULL OR s.users.userId = :userId)
           AND (:updatedDate IS NULL OR s.updatedAt >= :updatedDate)
         ORDER BY s.updatedAt DESC
     """)

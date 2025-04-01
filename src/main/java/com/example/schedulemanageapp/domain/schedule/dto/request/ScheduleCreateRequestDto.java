@@ -9,6 +9,9 @@ public record ScheduleCreateRequestDto(
         String todoTitle,
 
         @NotBlank(message = "할 일은 내용은 공백일 수 없습니다.") @Size(max = 200, message = "최대 200자까지 가능합니다.")
-        String todoContent
+        String todoContent,
+
+        @NotBlank(message = "비밀번호는 공백일 수 없습니다.")
+        String password
 ) {
 }

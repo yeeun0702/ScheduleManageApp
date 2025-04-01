@@ -3,6 +3,7 @@ package com.example.schedulemanageapp.domain.users.controller;
 import com.example.schedulemanageapp.common.exception.code.enums.SuccessCode;
 import com.example.schedulemanageapp.common.response.ApiResponseDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserCreateRequestDto;
+import com.example.schedulemanageapp.domain.users.dto.request.UserDeleteRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserUpdateRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserDetailResponseDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserUpdateResponseDto;
@@ -38,5 +39,12 @@ public class UserController {
         return ResponseEntity.ok(ApiResponseDto.success(SuccessCode.USER_UPDATE_SUCCESS, userService.updateUser(userId, userUpdateRequestDto), "api/users"));
     }
 
+    @DeleteMapping("{userId}")
+    public ResponseEntity<ApiResponseDto<Void>> deleteUser(
+            @PathVariable final Long userId,
+            @RequestBody @Valid final UserDeleteRequestDto userDeleteRequestDto){
+        userService.deleteUser(userId, userDeleteRequestDto);
+        return ResponseEntity.noContent().build();
+    }
 
 }

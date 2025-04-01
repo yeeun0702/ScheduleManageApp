@@ -1,8 +1,10 @@
 package com.example.schedulemanageapp.domain.users.service;
 
+import com.example.schedulemanageapp.common.exception.base.CustomException;
 import com.example.schedulemanageapp.common.exception.base.NotFoundException;
 import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.users.dto.request.UserCreateRequestDto;
+import com.example.schedulemanageapp.domain.users.dto.request.UserDeleteRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserUpdateRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserDetailResponseDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserUpdateResponseDto;
@@ -44,6 +46,20 @@ public class UserService {
         user.update(userUpdateRequestDto.userName(), userUpdateRequestDto.email(), userUpdateRequestDto.password());
 
         return UserUpdateResponseDto.from(user);
+    }
+
+    @Transactional
+    public void deleteUser(final Long userId, final UserDeleteRequestDto userDeleteRequestDto){
+
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        // 비밀 번호 일치 여부 확인
+        if (!userDeleteRequestDto.password().equals(user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        userRepository.deleteById(userId);
     }
 
 }

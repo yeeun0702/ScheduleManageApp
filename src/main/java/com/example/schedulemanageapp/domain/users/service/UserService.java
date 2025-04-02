@@ -34,6 +34,11 @@ public class UserService {
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userCreateRequestDto.password());
 
+        // 이메일 중복 확인
+        if (userRepository.findByEmail(userCreateRequestDto.email()).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+        }
+
         // 빌더 패턴을 사용하여 사용자 객체 생성
         Users user = Users.builder()
                 .userName(userCreateRequestDto.userName())

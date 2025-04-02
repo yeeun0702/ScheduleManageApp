@@ -19,6 +19,9 @@ public enum ErrorCode {
     // 비밀번호 관련
     INVALID_PASSWORD("P001", HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
 
+    // 중복 이메일
+    DUPLICATE_EMAIL("E001",  HttpStatus.BAD_REQUEST,"이미 사용 중인 이메일입니다."),
+
     // 404 - Not Found
     NOT_FOUND("A001", HttpStatus.NOT_FOUND, "존재하지 않는 API입니다."),
     USER_NOT_FOUND("U001", HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),

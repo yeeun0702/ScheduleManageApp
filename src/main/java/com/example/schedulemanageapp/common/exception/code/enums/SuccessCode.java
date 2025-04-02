@@ -10,7 +10,7 @@ public enum SuccessCode {
 
     // 201 Created
     SCHEDULE_CREATE_SUCCESS("SS2010", HttpStatus.CREATED, "일정이 성공적으로 생성되었습니다."),
-    USER_CREATE_SUCCESS("SU2010", HttpStatus.CREATED, "유저가 성공적으로 생성되었습니다."),
+    USER_SIGNUP_SUCCESS("SU2010", HttpStatus.CREATED, "회원가입이 완료되었습니다."),
 
     // 200 OK
     SCHEDULE_READ_SUCCESS("SS2000", HttpStatus.OK, "일정을 성공적으로 조회했습니다."),

@@ -1,5 +1,6 @@
 package com.example.schedulemanageapp.domain.users.service;
 
+import com.example.schedulemanageapp.common.config.PasswordEncoder;
 import com.example.schedulemanageapp.common.exception.base.CustomException;
 import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.users.dto.request.UserCreateRequestDto;
@@ -19,6 +20,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserServiceHelper userServiceHelper;
+    private final PasswordEncoder passwordEncoder;
+
 
     /**
      * 유저 생성
@@ -27,11 +30,17 @@ public class UserService {
      */
     @Transactional
     public void createUser(final UserCreateRequestDto userCreateRequestDto){
-        Users user = new Users(
-                userCreateRequestDto.userName(),
-                userCreateRequestDto.email(),
-                userCreateRequestDto.password()
-        );
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(userCreateRequestDto.password());
+
+        // 빌더 패턴을 사용하여 사용자 객체 생성
+        Users user = Users.builder()
+                .userName(userCreateRequestDto.userName())
+                .email(userCreateRequestDto.email())
+                .password(encodedPassword)
+                .build();  // 빌드 호출
+
         userRepository.save(user);
     }
 

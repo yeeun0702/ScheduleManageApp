@@ -20,7 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto<Void>> createUser(@RequestBody @Valid final UserCreateRequestDto userCreateRequestDto) {
         userService.createUser(userCreateRequestDto);
         return ResponseEntity.status(201)

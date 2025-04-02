@@ -24,7 +24,7 @@ public class UserController {
     public ResponseEntity<ApiResponseDto<Void>> createUser(@RequestBody @Valid final UserCreateRequestDto userCreateRequestDto) {
         userService.createUser(userCreateRequestDto);
         return ResponseEntity.status(201)
-                .body(ApiResponseDto.success(SuccessCode.USER_CREATE_SUCCESS, "/api/users"));
+                .body(ApiResponseDto.success(SuccessCode.USER_SIGNUP_SUCCESS, "/api/users"));
     }
 
     @GetMapping("{userId}")

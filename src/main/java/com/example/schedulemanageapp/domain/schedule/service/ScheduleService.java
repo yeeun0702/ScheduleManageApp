@@ -15,12 +15,12 @@ import com.example.schedulemanageapp.domain.users.entity.Users;
 import com.example.schedulemanageapp.domain.users.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,24 +62,46 @@ public class ScheduleService {
     }
 
     /**
-     * 조건에 따른 전체 일정 목록 조회
-     * - userId와 updatedDate를 조건으로 조회 (둘 다 null 가능)
-     * - updatedDate는 YYYY-MM-DD 형식으로 입력되어야 함
-     * - 수정일 기준 내림차순 정렬
-     * @param updatedDateStr 수정일 (String, YYYY-MM-DD)
-     * @param userId 유저 ID (nullable)
-     * @return 일정 목록 DTO 리스트
+     * 조건에 따른 일정 목록 페이징 조회
+     * - 사용자 ID(userId)와 수정일(updatedDateStr)을 조합하여 조건에 따라 필터링
+     * - Pageable을 이용해 페이징 처리
+     * - 최신 수정일 기준 내림차순 정렬
+     *
+     * @param updatedDateStr 수정일 필터 (예: "2024-03-01"), null 또는 빈 값일 수 있음
+     * @param userId 필터링할 사용자 ID, null일 경우 전체 사용자 대상으로 조회
+     * @param pageable 페이지 번호, 크기, 정렬 기준 등을 포함한 객체
+     * @return 조건에 맞는 일정 리스트를 ScheduleListResponseDto 형태로 Page 객체에 담아 반환
      */
     @Transactional
-    public List<ScheduleListResponseDto> findSchedulesByConditions(final String updatedDateStr, final Long userId) {
+    public Page<ScheduleListResponseDto> findSchedulesByConditions(String updatedDateStr, Long userId, Pageable pageable) {
+
+        // 문자열로 받은 날짜 필터를 LocalDateTime으로 변환
         LocalDateTime updatedDate = null;
         if (updatedDateStr != null && !updatedDateStr.isBlank()) {
             updatedDate = LocalDate.parse(updatedDateStr).atStartOfDay();
         }
 
-        return scheduleRepository.findSchedulesByConditions(userId, updatedDate).stream()
-                .map(ScheduleListResponseDto::from)
-                .collect(Collectors.toList());
+        Page<Schedule> schedules;
+
+        // 사용자 ID와 수정일이 모두 주어진 경우 -> 해당 사용자의 일정 중 수정일 이후 데이터만 조회
+        if (userId != null && updatedDate != null) {
+            schedules = scheduleRepository.findByUsers_UserIdAndUpdatedAtAfter(userId, updatedDate, pageable);
+
+            // 사용자 ID만 주어진 경우 -> 해당 사용자의 전체 일정 조회
+        } else if (userId != null) {
+            schedules = scheduleRepository.findByUsers_UserId(userId, pageable);
+
+            // 수정일만 주어진 경우 -> 전체 사용자 중 수정일 이후 일정 조회
+        } else if (updatedDate != null) {
+            schedules = scheduleRepository.findByUpdatedAtAfter(updatedDate, pageable);
+
+            // 아무 조건도 없을 경우 -> 전체 일정 조회
+        } else {
+            schedules = scheduleRepository.findAll(pageable);
+        }
+
+        // Schedule 엔티티를 DTO로 변환하여 반환
+        return schedules.map(ScheduleListResponseDto::from);
     }
 
     /**

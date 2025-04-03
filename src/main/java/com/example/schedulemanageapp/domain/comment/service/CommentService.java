@@ -5,6 +5,7 @@ import com.example.schedulemanageapp.common.exception.base.NotFoundException;
 import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.comment.dto.request.CommentCreateRequestDto;
 import com.example.schedulemanageapp.domain.comment.dto.response.CommentDetailResponseDto;
+import com.example.schedulemanageapp.domain.comment.dto.response.CommentListResponseDto;
 import com.example.schedulemanageapp.domain.comment.entity.Comment;
 import com.example.schedulemanageapp.domain.comment.repository.CommentRepository;
 import com.example.schedulemanageapp.domain.schedule.entity.Schedule;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -50,6 +54,19 @@ public class CommentService {
         return commentRepository.findById(commentId)
                 .map(CommentDetailResponseDto::from)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    /**
+     * 특정 일정의 전체 댓글 조회
+     */
+    @Transactional
+    public List<CommentListResponseDto> getCommentsBySchedule(final Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.SCHEDULE_NOT_FOUND));
+
+        return commentRepository.findAllBySchedule(schedule).stream()
+                .map(CommentListResponseDto::from)
+                .collect(Collectors.toList());
     }
 
 }

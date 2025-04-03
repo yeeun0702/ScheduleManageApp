@@ -3,8 +3,10 @@ package com.example.schedulemanageapp.domain.comment.controller;
 import com.example.schedulemanageapp.common.exception.code.enums.SuccessCode;
 import com.example.schedulemanageapp.common.response.ApiResponseDto;
 import com.example.schedulemanageapp.domain.comment.dto.request.CommentCreateRequestDto;
+import com.example.schedulemanageapp.domain.comment.dto.request.CommentUpdateRequestDto;
 import com.example.schedulemanageapp.domain.comment.dto.response.CommentDetailResponseDto;
 import com.example.schedulemanageapp.domain.comment.dto.response.CommentListResponseDto;
+import com.example.schedulemanageapp.domain.comment.dto.response.CommentUpdateResponseDto;
 import com.example.schedulemanageapp.domain.comment.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +43,13 @@ public class CommentController {
         );
     }
 
+    @PutMapping("/{commentId}")
+    public ResponseEntity<ApiResponseDto<CommentUpdateResponseDto>> updateComment(
+            @PathVariable final Long commentId,
+            @RequestBody @Valid final CommentUpdateRequestDto commentUpdateRequestDto) {
+        return ResponseEntity.ok(
+                ApiResponseDto.success(SuccessCode.COMMENT_UPDATE_SUCCESS, commentService.updateComment(commentId, commentUpdateRequestDto), "/api/comments")
+        );
+    }
 
 }

@@ -4,8 +4,10 @@ import com.example.schedulemanageapp.common.exception.base.CustomException;
 import com.example.schedulemanageapp.common.exception.base.NotFoundException;
 import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.comment.dto.request.CommentCreateRequestDto;
+import com.example.schedulemanageapp.domain.comment.dto.request.CommentUpdateRequestDto;
 import com.example.schedulemanageapp.domain.comment.dto.response.CommentDetailResponseDto;
 import com.example.schedulemanageapp.domain.comment.dto.response.CommentListResponseDto;
+import com.example.schedulemanageapp.domain.comment.dto.response.CommentUpdateResponseDto;
 import com.example.schedulemanageapp.domain.comment.entity.Comment;
 import com.example.schedulemanageapp.domain.comment.repository.CommentRepository;
 import com.example.schedulemanageapp.domain.schedule.entity.Schedule;
@@ -69,4 +71,16 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 댓글 수정
+     */
+    @Transactional
+    public CommentUpdateResponseDto updateComment(final Long commentId, final CommentUpdateRequestDto commentUpdateRequestDto) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+
+        comment.update(commentUpdateRequestDto.commentContent());
+
+        return CommentUpdateResponseDto.from(comment);
+    }
 }

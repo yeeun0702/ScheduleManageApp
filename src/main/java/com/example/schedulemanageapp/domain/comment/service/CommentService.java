@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final CommentServiceHelper commentServiceHelper;
     private final ScheduleRepository scheduleRepository;
     private final UserServiceHelper userServiceHelper;
 
@@ -48,14 +49,14 @@ public class CommentService {
 
         commentRepository.save(comment);
     }
+
     /**
      * 댓글 단건 조회
      */
     @Transactional
     public CommentDetailResponseDto getComment(final Long commentId) {
-        return commentRepository.findById(commentId)
-                .map(CommentDetailResponseDto::from)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+        Comment comment = commentServiceHelper.findCommentOrThrow(commentId);
+        return CommentDetailResponseDto.from(comment);
     }
 
     /**
@@ -76,11 +77,9 @@ public class CommentService {
      */
     @Transactional
     public CommentUpdateResponseDto updateComment(final Long commentId, final CommentUpdateRequestDto commentUpdateRequestDto) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
 
+        Comment comment = commentServiceHelper.findCommentOrThrow(commentId);
         comment.update(commentUpdateRequestDto.commentContent());
-
         return CommentUpdateResponseDto.from(comment);
     }
 
@@ -89,9 +88,7 @@ public class CommentService {
      */
     @Transactional
     public void deleteComment(final Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
-
+        Comment comment = commentServiceHelper.findCommentOrThrow(commentId);
         commentRepository.delete(comment);
     }
 }

@@ -1,11 +1,15 @@
 package com.example.schedulemanageapp.domain.schedule.entity;
 
 import com.example.schedulemanageapp.common.entity.BaseTimeEntity;
+import com.example.schedulemanageapp.domain.comment.entity.Comment;
 import com.example.schedulemanageapp.domain.users.entity.Users;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -29,6 +33,10 @@ public class Schedule extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
+
+    // 해당 일정에 달린 댓글 목록
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     // 생성자
     public Schedule(String todoTitle, String todoContent, String password, Users users) {

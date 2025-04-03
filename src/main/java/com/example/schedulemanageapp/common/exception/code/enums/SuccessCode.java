@@ -24,8 +24,7 @@ public enum SuccessCode {
     USER_DELETE_SUCCESS("SU2003", HttpStatus.OK, "유저를 성공적으로 삭제했습니다."),
     COMMENT_READ_SUCCESS("SC2000", HttpStatus.OK, "댓글을 성공적으로 조회했습니다."),
     COMMENT_LIST_SUCCESS("SC2001", HttpStatus.OK,"댓글 목록을 성공적으로 조회했습니다."),
-    COMMENT_UPDATE_SUCCESS("SC2002", HttpStatus.OK,"댓글 목록을 성공적으로 수정했습니다."),
-    COMMENT_DELETE_SUCCESS("SC2003", HttpStatus.OK,"댓글 목록을 성공적으로 삭제했습니다.");
+    COMMENT_UPDATE_SUCCESS("SC2002", HttpStatus.OK,"댓글 목록을 성공적으로 수정했습니다.");
 
 
     private final String code;

@@ -1,27 +1,23 @@
 package com.example.schedulemanageapp.domain.schedule.repository;
 
 import com.example.schedulemanageapp.domain.schedule.entity.Schedule;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    /* - userId가 null이 아니면 해당 유저의 일정만 필터링
-       - updatedDate가 null이 아니면 수정일 기준 이후의 일정만 필터링
-     */
-    @Query("""
-        SELECT s FROM Schedule s
-        WHERE (:userId IS NULL OR s.users.userId = :userId)
-          AND (:updatedDate IS NULL OR s.updatedAt >= :updatedDate)
-        ORDER BY s.updatedAt DESC
-    """)
-    List<Schedule> findSchedulesByConditions(
-        Long userId,
-        LocalDateTime updatedDate
-    );
+    // 조건 기반 페이징 쿼리
+    Page<Schedule> findByUsers_UserId(Long userId, Pageable pageable);
+
+    Page<Schedule> findByUpdatedAtAfter(LocalDateTime updatedDate, Pageable pageable);
+
+    Page<Schedule> findByUsers_UserIdAndUpdatedAtAfter(Long userId, LocalDateTime updatedDate, Pageable pageable);
+
+    Page<Schedule> findAll(Pageable pageable); // 기본 findAll도 사용 가능
+
 }

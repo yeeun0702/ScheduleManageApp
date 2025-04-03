@@ -5,14 +5,16 @@ public record ScheduleListResponseDto(
         Long scheduleId,
         String todoTitle,
         String todoContent,
-        String userName // 사용자 정보 포함
+        String userName, // 사용자 정보 포함
+        int commentCount
 ) {
     public static ScheduleListResponseDto from(Schedule schedule) {
         return new ScheduleListResponseDto(
                 schedule.getScheduleId(),
                 schedule.getTodoTitle(),
                 schedule.getTodoContent(),
-                schedule.getUsers().getUserName() // Users 엔티티에서 이름 가져오기
+                schedule.getUsers().getUserName(), // Users 엔티티에서 이름 가져오기
+                schedule.getComments().size()
         );
     }
 }

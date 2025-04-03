@@ -30,6 +30,7 @@ public enum ErrorCode {
     NOT_FOUND("A001", HttpStatus.NOT_FOUND, "존재하지 않는 API입니다."),
     USER_NOT_FOUND("U001", HttpStatus.NOT_FOUND, "존재하지 않는 유저입니다."),
     SCHEDULE_NOT_FOUND("S001", HttpStatus.NOT_FOUND, "존재하지 않는 일정입니다."),
+    COMMENT_NOT_FOUND("C001", HttpStatus.NOT_FOUND, "존재하지 않는 댓글입니다."),
 
     // 500 - 서버 내부 오류
     INTERNAL_SERVER_ERROR("SYS001", HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),

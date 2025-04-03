@@ -2,14 +2,18 @@ package com.example.schedulemanageapp.domain.users.service;
 
 import com.example.schedulemanageapp.common.config.PasswordEncoder;
 import com.example.schedulemanageapp.common.exception.base.CustomException;
+import com.example.schedulemanageapp.common.exception.base.NotFoundException;
 import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.users.dto.request.UserCreateRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserDeleteRequestDto;
+import com.example.schedulemanageapp.domain.users.dto.request.UserLoginRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserUpdateRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserDetailResponseDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserUpdateResponseDto;
 import com.example.schedulemanageapp.domain.users.entity.Users;
 import com.example.schedulemanageapp.domain.users.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,14 +26,13 @@ public class UserService {
     private final UserServiceHelper userServiceHelper;
     private final PasswordEncoder passwordEncoder;
 
-
     /**
      * 유저 생성
      *
      * @param userCreateRequestDto 사용자 생성 요청 데이터를 담은 DTO
      */
     @Transactional
-    public void createUser(final UserCreateRequestDto userCreateRequestDto){
+    public void createUser(final UserCreateRequestDto userCreateRequestDto, HttpServletRequest httpServletRequest) {
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userCreateRequestDto.password());
@@ -47,8 +50,32 @@ public class UserService {
                 .build();  // 빌드 호출
 
         userRepository.save(user);
+
+        // 회원가입 후 세션에 사용자 정보 저장
+        HttpSession httpSession = httpServletRequest.getSession(true);  // 새로운 세션 생성
+        httpSession.setAttribute("user", user);  // 세션에 사용자 정보 저장
     }
 
+    @Transactional
+    public boolean login(final UserLoginRequestDto userLoginRequestDto, HttpServletRequest httpServletRequest) {
+
+        // 이메일과 사용자 이름을 기준으로 사용자 조회
+        Users user = userRepository.findByEmail(userLoginRequestDto.email())
+                .filter(u -> u.getUserName().equals(userLoginRequestDto.userName()))  // 사용자 이름의 일치 여부도 확인
+                .orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND));
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(userLoginRequestDto.password(), user.getPassword())) {
+            // 비밀번호가 틀린 경우 예외 처리
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        // 세션을 통해 사용자 정보 저장
+        HttpSession httpSession = httpServletRequest.getSession(true);  // 새로운 세션을 생성
+        httpSession.setAttribute("user", user);  // 세션에 사용자 정보 저장
+
+        return true; // 로그인 성공 시 true 반환
+    }
 
     /**
      * 유저 조회
@@ -61,7 +88,6 @@ public class UserService {
         Users user = userServiceHelper.findUserOrThrow(userId);
         return UserDetailResponseDto.from(user);
     }
-
 
     /**
      * 유저 수정

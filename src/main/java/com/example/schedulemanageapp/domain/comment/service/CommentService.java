@@ -83,4 +83,15 @@ public class CommentService {
 
         return CommentUpdateResponseDto.from(comment);
     }
+
+    /**
+     * 댓글 삭제
+     */
+    @Transactional
+    public void deleteComment(final Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
+
+        commentRepository.delete(comment);
+    }
 }

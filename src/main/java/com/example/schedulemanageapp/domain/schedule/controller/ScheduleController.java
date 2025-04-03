@@ -12,10 +12,12 @@ import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleUpdate
 import com.example.schedulemanageapp.domain.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/schedules")
@@ -37,12 +39,13 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDto<List<ScheduleListResponseDto>>> searchAllSchedules(
-            @RequestParam(required = false) String updatedDate, // 조회 기준이 되는 수정일
-            @RequestParam(required = false) Long userId // 조회 대상의 사용자 ID, null 이면 전체 조회
+    public ResponseEntity<ApiResponseDto<Page<ScheduleListResponseDto>>> searchAllSchedules(
+            @RequestParam(required = false) String updatedDate,
+            @RequestParam(required = false) Long userId,
+            @PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return ResponseEntity.ok(
-                ApiResponseDto.success(SuccessCode.SCHEDULE_LIST_SUCCESS, scheduleService.findSchedulesByConditions(updatedDate, userId), "/api/schedules")
+                ApiResponseDto.success(SuccessCode.SCHEDULE_LIST_SUCCESS, scheduleService.findSchedulesByConditions(updatedDate, userId, pageable), "/api/schedules")
         );
     }
 

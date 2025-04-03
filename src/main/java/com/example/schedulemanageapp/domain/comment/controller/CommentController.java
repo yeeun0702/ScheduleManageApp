@@ -4,11 +4,14 @@ import com.example.schedulemanageapp.common.exception.code.enums.SuccessCode;
 import com.example.schedulemanageapp.common.response.ApiResponseDto;
 import com.example.schedulemanageapp.domain.comment.dto.request.CommentCreateRequestDto;
 import com.example.schedulemanageapp.domain.comment.dto.response.CommentDetailResponseDto;
+import com.example.schedulemanageapp.domain.comment.dto.response.CommentListResponseDto;
 import com.example.schedulemanageapp.domain.comment.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/comments")
@@ -30,5 +33,13 @@ public class CommentController {
                 ApiResponseDto.success(SuccessCode.COMMENT_READ_SUCCESS, commentService.getComment(commentId), "/api/comments/")
         );
     }
+
+    @GetMapping("/schedule/{scheduleId}")
+    public ResponseEntity<ApiResponseDto<List<CommentListResponseDto>>> getCommentsBySchedule(@PathVariable final Long scheduleId) {
+        return ResponseEntity.ok(
+                ApiResponseDto.success(SuccessCode.COMMENT_LIST_SUCCESS, commentService.getCommentsBySchedule(scheduleId), "/api/comments/schedule/" + scheduleId)
+        );
+    }
+
 
 }

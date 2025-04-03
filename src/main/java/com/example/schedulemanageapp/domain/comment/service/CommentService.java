@@ -1,8 +1,10 @@
 package com.example.schedulemanageapp.domain.comment.service;
 
 import com.example.schedulemanageapp.common.exception.base.CustomException;
+import com.example.schedulemanageapp.common.exception.base.NotFoundException;
 import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.comment.dto.request.CommentCreateRequestDto;
+import com.example.schedulemanageapp.domain.comment.dto.response.CommentDetailResponseDto;
 import com.example.schedulemanageapp.domain.comment.entity.Comment;
 import com.example.schedulemanageapp.domain.comment.repository.CommentRepository;
 import com.example.schedulemanageapp.domain.schedule.entity.Schedule;
@@ -39,6 +41,15 @@ public class CommentService {
                 .build();
 
         commentRepository.save(comment);
+    }
+    /**
+     * 댓글 단건 조회
+     */
+    @Transactional
+    public CommentDetailResponseDto getComment(final Long commentId) {
+        return commentRepository.findById(commentId)
+                .map(CommentDetailResponseDto::from)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.COMMENT_NOT_FOUND));
     }
 
 }

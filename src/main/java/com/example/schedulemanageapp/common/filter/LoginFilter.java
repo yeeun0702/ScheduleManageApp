@@ -24,9 +24,9 @@ public class LoginFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
 
-        // 회원가입 경로는 필터링 제외
+        // // 회원가입, 로그인은 필터링 제외
         String uri = httpServletRequest.getRequestURI();
-        if (uri.contains("/signup")) {
+        if (uri.contains("/signup") || uri.contains("/login")) {
             chain.doFilter(servletRequest, servletResponse);  // 회원가입 경로는 필터링 하지 않음
             return;
         }

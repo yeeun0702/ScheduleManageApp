@@ -50,9 +50,8 @@ public class UserService {
 
         userRepository.save(user);
 
-        // 회원가입 후 세션에 사용자 정보 저장
         HttpSession httpSession = httpServletRequest.getSession(true);  // 새로운 세션 생성
-        httpSession.setAttribute("user", user);  // 세션에 사용자 정보 저장
+        userRepository.save(user); // 로그인 한 건 아니므로 세션 저장은 X
     }
 
     @Transactional

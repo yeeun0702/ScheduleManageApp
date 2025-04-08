@@ -6,6 +6,7 @@ import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleCreateRequestDto;
 import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleDeleteRequestDto;
 import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleUpdateReqeustDto;
+import com.example.schedulemanageapp.domain.schedule.dto.response.PageResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleDetailResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleListResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleUpdateResponseDto;
@@ -73,7 +74,7 @@ public class ScheduleService {
      * @return 조건에 맞는 일정 리스트를 ScheduleListResponseDto 형태로 Page 객체에 담아 반환
      */
     @Transactional
-    public Page<ScheduleListResponseDto> findSchedulesByConditions(String updatedDateStr, Long userId, Pageable pageable) {
+    public PageResponseDto<ScheduleListResponseDto> findSchedulesByConditions(String updatedDateStr, Long userId, Pageable pageable) {
 
         // 문자열로 받은 날짜 필터를 LocalDateTime으로 변환
         LocalDateTime updatedDate = null;
@@ -100,8 +101,11 @@ public class ScheduleService {
             schedules = scheduleRepository.findAll(pageable);
         }
 
-        // Schedule 엔티티를 DTO로 변환하여 반환
-        return schedules.map(ScheduleListResponseDto::from);
+        // Schedule → ScheduleListResponseDto 매핑
+        Page<ScheduleListResponseDto> dtoPage = schedules.map(ScheduleListResponseDto::from);
+
+        // Page → PageResponseDto로 감싸서 반환
+        return PageResponseDto.from(dtoPage);
     }
 
     /**

@@ -6,13 +6,13 @@ import com.example.schedulemanageapp.common.response.ApiResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleCreateRequestDto;
 import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleDeleteRequestDto;
 import com.example.schedulemanageapp.domain.schedule.dto.request.ScheduleUpdateReqeustDto;
+import com.example.schedulemanageapp.domain.schedule.dto.response.PageResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleDetailResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleListResponseDto;
 import com.example.schedulemanageapp.domain.schedule.dto.response.ScheduleUpdateResponseDto;
 import com.example.schedulemanageapp.domain.schedule.service.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -39,7 +39,7 @@ public class ScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseDto<Page<ScheduleListResponseDto>>> searchAllSchedules(
+    public ResponseEntity<ApiResponseDto<PageResponseDto<ScheduleListResponseDto>>> searchAllSchedules(
             @RequestParam(required = false) String updatedDate,
             @RequestParam(required = false) Long userId,
             @PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable

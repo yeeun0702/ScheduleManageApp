@@ -5,11 +5,14 @@ import com.example.schedulemanageapp.common.exception.base.CustomException;
 import com.example.schedulemanageapp.common.exception.code.enums.ErrorCode;
 import com.example.schedulemanageapp.domain.users.dto.request.UserCreateRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserDeleteRequestDto;
+import com.example.schedulemanageapp.domain.users.dto.request.UserLoginRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.request.UserUpdateRequestDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserDetailResponseDto;
 import com.example.schedulemanageapp.domain.users.dto.response.UserUpdateResponseDto;
 import com.example.schedulemanageapp.domain.users.entity.Users;
 import com.example.schedulemanageapp.domain.users.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,14 +25,13 @@ public class UserService {
     private final UserServiceHelper userServiceHelper;
     private final PasswordEncoder passwordEncoder;
 
-
     /**
      * 유저 생성
      *
      * @param userCreateRequestDto 사용자 생성 요청 데이터를 담은 DTO
      */
     @Transactional
-    public void createUser(final UserCreateRequestDto userCreateRequestDto){
+    public void createUser(final UserCreateRequestDto userCreateRequestDto, HttpServletRequest httpServletRequest) {
 
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(userCreateRequestDto.password());
@@ -46,9 +48,25 @@ public class UserService {
                 .password(encodedPassword)
                 .build();  // 빌드 호출
 
-        userRepository.save(user);
+        userRepository.save(user); // 로그인 한 건 아니므로 세션 저장은 X
     }
 
+    @Transactional
+    public void login(final UserLoginRequestDto dto, HttpServletRequest request) {
+
+        // 사용자 조회
+        Users user = userRepository.findByEmail(dto.email())
+                .filter(u -> u.getUserName().equals(dto.userName()))
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_REGISTERED));
+
+        // 비밀번호 확인
+        if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute("user", user);
+    }
 
     /**
      * 유저 조회
@@ -61,7 +79,6 @@ public class UserService {
         Users user = userServiceHelper.findUserOrThrow(userId);
         return UserDetailResponseDto.from(user);
     }
-
 
     /**
      * 유저 수정

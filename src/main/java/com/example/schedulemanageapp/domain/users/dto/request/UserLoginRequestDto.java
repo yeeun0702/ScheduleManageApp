@@ -4,9 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserCreateRequestDto(
-
-        @NotBlank(message = "유저 이름은 공백일 수 없습니다.") @Size(max = 4, message = "최대 4글자까지 가능합니다.")
+public record UserLoginRequestDto(
+        @NotBlank @Size(max = 4, message = "최대 4글자까지 가능합니다.")
         String userName,
 
         @NotBlank(message = "이메일은 필수입니다.")

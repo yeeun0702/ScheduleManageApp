@@ -13,6 +13,10 @@ public enum ErrorCode {
     MISSING_PARAMETER("C001", HttpStatus.BAD_REQUEST, "필수 파라미터가 누락되었습니다."),
     INVALID_PARAMETER("C002", HttpStatus.BAD_REQUEST, "유효하지 않은 요청 파라미터입니다."),
 
+    // 401
+    UNAUTHORIZED("A001", HttpStatus.UNAUTHORIZED, "인증되지 않은 유저입니다."),
+    USER_NOT_REGISTERED("A002", HttpStatus.UNAUTHORIZED,  "회원가입을 완료한 후 로그인해주세요."),
+
     // 405 - 지원하지 않는 메서드
     METHOD_NOT_ALLOWED("C003", HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 메소드입니다."),
 

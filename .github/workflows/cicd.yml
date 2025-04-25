@@ -64,3 +64,6 @@ jobs:
 
             # 새로운 프로세스 실행 (spring.profiles.active=prod 적용)
             nohup java -jar -Dspring.profiles.active=prod /home/${{ secrets.EC2_USER }}/app/${{ secrets.APP_NAME }}.jar > /home/${{ secrets.EC2_USER }}/app/nohup.out 2>&1 &
+            disown
+            sleep 5
+            exit 0
